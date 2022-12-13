@@ -1,5 +1,6 @@
-import axios from "axios"
-import { useState, useEffect } from "react"
+import axios from "axios";
+import { useState, useEffect } from "react";
+import ToDoListView from "./ToDoListView";
 
 export interface IToDo {
     task: string;
@@ -9,7 +10,7 @@ export interface IToDo {
 
 const url = "http://localhost:4000"
 
-export default function ToDoListFunction(): JSX.Element {
+export default function Main(): JSX.Element {
     const [toDoList, setToDoList] = useState<IToDo[]>([]);
     const [input, setInput] = useState<string>('')
     const [update, setUpdate] = useState<boolean>(false);
@@ -17,7 +18,7 @@ export default function ToDoListFunction(): JSX.Element {
     //    task: '',
     //});
 
-    // Update to-dos on start
+    // Update to-dos on START
     useEffect(() => {
         getToDoList();
     }, []);
@@ -54,8 +55,34 @@ export default function ToDoListFunction(): JSX.Element {
         console.log(input)
         postToDoList(input)
     }
+
     //PATCH a to do
+    const patchToDo = async (toDoID: string, isCompleted: boolean) => {
+        console.log("patchToDo function works!");
+        try {
+          await axios.patch(url + "/items/" + toDoID, {
+            completed: !isCompleted,
+          });
+        } catch (error) {
+          console.error(
+            "Woops... issue with PATCH request: ",
+            error
+          );
+        }
+      };
+
     //DELETE completed to dos
+    const deleteCompletedToDos = async () => {
+        console.log("deleteCompletedToDos function works!");
+        try {
+          await axios.delete(url + "/completed-items/");
+        } catch (error) {
+          console.error(
+            "Oops... there was an issue with your DELETE (completed to dos) request: ",
+            error
+          );
+        }
+      };
 
     return (
         <>
@@ -73,6 +100,19 @@ export default function ToDoListFunction(): JSX.Element {
                     <div key={el.id}>{el.task}</div>
                 )
             })}
+            <div>
+            <ToDoListView
+                toDoArr={toDoArr}
+                patchToDo={patchToDo}
+                inputText={inputText}
+                setInputText={setInputText}
+                getToDoArr={getToDoArr}
+                postToDoArr={postToDoArr}
+                deleteCompletedToDos={deleteCompletedToDos}
+                dBUpdated={dBUpdated}
+                setDbUpdated={setDbUpdated}
+            />
+            </div>
         </>
     )
 }
