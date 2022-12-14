@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import ToDoListView from "./ToDoListView";
+// import ToDoItem from "./ToDoItem";
 
 export interface IToDo {
     task: string;
     completed: boolean;
     id: number;
+    deleted: boolean;
 }
 
 const url = "http://localhost:4000"
@@ -13,10 +14,6 @@ const url = "http://localhost:4000"
 export default function Main(): JSX.Element {
     const [toDoList, setToDoList] = useState<IToDo[]>([]);
     const [input, setInput] = useState<string>('')
-    const [update, setUpdate] = useState<boolean>(false);
-    //const [formState, setFormState] = useState({
-    //    task: '',
-    //});
 
     // Update to-dos on START
     useEffect(() => {
@@ -49,7 +46,6 @@ export default function Main(): JSX.Element {
           );
         }
     };
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         console.log(input)
@@ -57,62 +53,91 @@ export default function Main(): JSX.Element {
     }
 
     //PATCH a to do
-    const patchToDo = async (toDoID: string, isCompleted: boolean) => {
-        console.log("patchToDo function works!");
-        try {
-          await axios.patch(url + "/items/" + toDoID, {
-            completed: !isCompleted,
-          });
-        } catch (error) {
-          console.error(
-            "Woops... issue with PATCH request: ",
-            error
-          );
-        }
-      };
+    const patchToDo = async (id: string, isCompleted: boolean) => {
+      console.log("patchToDo function works!");
+      try {
+        await axios.patch(url + "/items/" + id, {
+          completed: !isCompleted,
+        });
+      } catch (error) {
+        console.error(
+          "Woops... issue with PATCH request: ",
+          error
+        );
+      }
+    };
+    const handlePatch = async (id: number, completed: boolean) => {
+      await patchToDo(String(id), completed);
+      getToDoList();
+    };
+    
 
     //DELETE completed to dos
-    const deleteCompletedToDos = async () => {
-        console.log("deleteCompletedToDos function works!");
-        try {
-          await axios.delete(url + "/completed-items/");
-        } catch (error) {
-          console.error(
-            "Oops... there was an issue with your DELETE (completed to dos) request: ",
-            error
-          );
-        }
-      };
+    const deleteCompleted = async () => {
+      console.log("delete completed function works!");
+      try {
+        await axios.delete(url + "/completed-items");
+      } catch (error) {
+        console.error(
+          "Woops... issue with DELETE (completed to dos) request: ",
+          error
+        );
+      }
+    };
+    const handleDeleteCompleted = () => {
+      deleteCompleted().then(() => getToDoList());
+    };
+
+    // DELETE selected to dos
+    const deleteSelected = async (id:string) => {
+      console.log("delete selected function works!");
+      try {
+        await axios.delete(url + "/items/" + id);
+      } catch (error) {
+        console.error(
+          "Woops... issue with DELETE (selected) request: ",
+          error
+        );
+      }
+    };
+    const handleDeleteSelected = (id:number) => {
+      deleteSelected(String(id)).then(() => getToDoList());
+    }
 
     return (
-        <>
-            <form onSubmit={handleSubmit}>
-                <input 
-                    name='task'
-                    type='text'
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                />
-                <button type="submit" ></button>
-            </form>
-            {toDoList.map((el) => {
-                return (
-                    <div key={el.id}>{el.task}</div>
-                )
-            })}
-            <div>
-            <ToDoListView
-                toDoArr={toDoArr}
-                patchToDo={patchToDo}
-                inputText={inputText}
-                setInputText={setInputText}
-                getToDoArr={getToDoArr}
-                postToDoArr={postToDoArr}
-                deleteCompletedToDos={deleteCompletedToDos}
-                dBUpdated={dBUpdated}
-                setDbUpdated={setDbUpdated}
+      <>
+        <form onSubmit={handleSubmit}>
+          <input 
+            name='task'
+            type='text'
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             />
-            </div>
-        </>
+          <button type="submit" ></button>
+        </form>
+        <button
+          className="delete-completed"
+          onClick={handleDeleteCompleted}
+        >Delete Completed</button>
+        <ul>
+          {toDoList.map((toDo) => {
+            return (
+              <div className='to-do' key={toDo.id}>
+                <button 
+                  className={`${toDo.completed}`}
+                  id={String(toDo.id)}
+                  onClick={() => handlePatch(toDo.id, toDo.completed)}
+                ></button>
+                <span className="task-text">{toDo.task}</span>
+                <button 
+                  className="bin-button"
+                  id={String(toDo.id)}
+                  onClick={() => handleDeleteSelected(toDo.id)}
+                >🗑</button>
+              </div>
+            );
+          })}
+        </ul>
+      </>
     )
 }
