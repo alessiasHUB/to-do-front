@@ -1,15 +1,17 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-// import ToDoItem from "./ToDoItem";
 
 export interface IToDo {
     task: string;
     completed: boolean;
     id: number;
-    deleted: boolean;
 }
 
-const url = "http://localhost:4000"
+// when running locally
+// const url = "http://localhost:4000"
+
+// when deployed
+const url ="https://to-do-back.onrender.com"
 
 export default function Main(): JSX.Element {
     const [toDoList, setToDoList] = useState<IToDo[]>([]);
@@ -18,7 +20,7 @@ export default function Main(): JSX.Element {
     // Update to-dos on START
     useEffect(() => {
         getToDoList();
-    }, []);
+    }, [toDoList]);
 
     //GET to dos from API
     const getToDoList = async () => {
@@ -50,6 +52,7 @@ export default function Main(): JSX.Element {
         e.preventDefault()
         console.log(input)
         postToDoList(input)
+        setInput('')
     }
 
     //PATCH a to do
@@ -112,14 +115,16 @@ export default function Main(): JSX.Element {
             type='text'
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            />
-          <button type="submit" ></button>
+            placeholder='What do you need to do?'
+          />
+          <span> </span>
+          <button type="submit">+</button>
         </form>
         <button
           className="delete-completed"
           onClick={handleDeleteCompleted}
-        >Delete Completed</button>
-        <ul>
+        >🗑 Completed tasks</button>
+        <div className="to-do-container">
           {toDoList.map((toDo) => {
             return (
               <div className='to-do' key={toDo.id}>
@@ -137,7 +142,7 @@ export default function Main(): JSX.Element {
               </div>
             );
           })}
-        </ul>
+        </div>
       </>
     )
 }

@@ -1,7 +1,7 @@
 export default function Footer(): JSX.Element {
     return (
-        <>
-            <p>my footer</p>
-        </>
+        <div className="footer">
+            <p>copyright to-do-dot-com</p>
+        </div>
     )
 }

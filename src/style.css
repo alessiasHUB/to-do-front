@@ -1,12 +1,20 @@
 * {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: rgb(252, 252, 252);
 }
-
+input {
+  background-color: aliceblue;
+}
+button {
+  background-color: aliceblue;
+}
+.to-do-container {
+  margin-top: 7px;
+}
 .to-do {
-  background-color: rgb(255, 208, 190);
+  background-color: rgb(194, 233, 255);
   width: 250px;
-  height: 30px;
-  outline: auto;
+  height: 40px;
   margin-bottom: 5px;
   text-align: left;
   font-size: 16px;
@@ -16,6 +24,7 @@
 }
 .task-text {
   color: black;
+  background-color: rgb(194, 233, 255);
   flex-grow: 4;
   margin-left: 4px;
 }
@@ -23,11 +32,7 @@
   background-color: rgb(209, 209, 209);
   width: 25px;
   height: 25px;
-  max-width: 100%;
-  max-height: 100%;
-  padding: 0px;
-  font-size: 16px;
-  margin-left: 4px;
+  margin: 6px;
 }
 .true {
   background: url("./img/tick.png");
@@ -37,20 +42,27 @@
   background-color: white;
   width: 25px;
   height: 25px;
-  max-width: 100%;
-  max-height: 100%;
-  text-align: center;
-  padding: 0px;
-  font-size: 16px;
-  margin-left: 4px;
+  margin: 6px;
 }
 .bin-button {
+  background-color: rgb(255, 249, 249);
   width: 25px;
   height: 25px;
-  max-width: 100%;
-  max-height: 100%;
   text-align: center;
   padding: 0px;
   font-size: 16px;
   margin-right: 4px;
+  margin: 6px;
+}
+
+.delete-completed {
+  margin-top:5px;
+  background-color: rgb(182, 203, 219);
+  color: rgb(0, 0, 0);
+  outline-style: none;
+  text-align: left;
+}
+.footer {
+  font-size: 10px;
+  color: darkgrey;
 }
