@@ -12,7 +12,6 @@ export default function App(): JSX.Element {
   );
 }
 
-
 /**
  * POSSIBLE FEATURES:
  * Adding and editing todos

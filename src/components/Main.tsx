@@ -8,7 +8,7 @@ export interface IToDo {
 }
 
 // when running locally
-const url = "http://localhost:4000"
+const url = "http://localhost:4000";
 
 // when deployed
 // const url = "https://to-do-back.onrender.com";
@@ -17,7 +17,7 @@ export default function Main(): JSX.Element {
   const [toDoList, setToDoList] = useState<IToDo[]>([]);
   const [input, setInput] = useState<string>("");
 
-  console.log(toDoList)
+  console.log(toDoList);
   // Update to-dos on START
   useEffect(() => {
     getToDoList();
@@ -59,7 +59,7 @@ export default function Main(): JSX.Element {
       });
     } catch (error) {
       console.error("Woops... issue with PATCH request: ", error);
-      console.error(error)
+      console.error(error);
     }
   };
   const handlePatch = async (id: number, completed: boolean) => {
