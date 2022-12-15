@@ -7,11 +7,10 @@ export interface IToDo {
   id: number;
 }
 
-// when running locally
-// const url = "http://localhost:4000";
-
-// when deployed
-const url = "https://to-do-back.onrender.com";
+const url = 
+  process.env.NODE_ENV === "production"
+    ? "https://to-do-back.onrender.com"
+    : "http://localhost:4000";
 
 export default function Main(): JSX.Element {
   const [toDoList, setToDoList] = useState<IToDo[]>([]);
