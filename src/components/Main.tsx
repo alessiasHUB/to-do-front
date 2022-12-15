@@ -8,10 +8,10 @@ export interface IToDo {
 }
 
 // when running locally
-const url = "http://localhost:4000";
+// const url = "http://localhost:4000";
 
 // when deployed
-// const url = "https://to-do-back.onrender.com";
+const url = "https://to-do-back.onrender.com";
 
 export default function Main(): JSX.Element {
   const [toDoList, setToDoList] = useState<IToDo[]>([]);
