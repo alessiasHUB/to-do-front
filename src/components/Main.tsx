@@ -7,6 +7,11 @@ export interface IToDo {
   id: number;
 }
 
+// THINGS TO FIX:
+// make sure the order doesn't change when complete-button us pressed
+// have the todos be displayed, newest at the top
+// CSS
+
 const url = 
   process.env.NODE_ENV === "production"
     ? "https://to-do-back.onrender.com"
@@ -20,7 +25,7 @@ export default function Main(): JSX.Element {
   // Update to-dos on START
   useEffect(() => {
     getToDoList();
-  }, []);
+  }, [input]);
 
   //GET to dos from API
   const getToDoList = async () => {
@@ -106,11 +111,12 @@ export default function Main(): JSX.Element {
           placeholder="What do you need to do?"
         />
         <span> </span>
-        <button type="submit">+</button>
+        <button type="submit" className="add-button">+</button>
       </form>
       <button className="delete-completed" onClick={handleDeleteCompleted}>
-        🗑 Completed tasks
+      ✖ Completed tasks
       </button>
+      
       <div className="to-do-container">
         {toDoList.map((toDo) => {
           return (
@@ -119,14 +125,14 @@ export default function Main(): JSX.Element {
                 className={`${toDo.completed}`}
                 id={String(toDo.id)}
                 onClick={() => handlePatch(toDo.id, toDo.completed)}
-              ></button>
+              >✓</button>
               <span className="task-text">{toDo.task}</span>
               <button
                 className="bin-button"
                 id={String(toDo.id)}
                 onClick={() => handleDeleteSelected(toDo.id)}
               >
-                🗑
+                ✖
               </button>
             </div>
           );
