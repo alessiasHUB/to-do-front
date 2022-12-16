@@ -10,9 +10,7 @@
 }
 @keyframes glow {
   to {
-    text-shadow: 0 0 10px rgb(114, 187, 255), 0 0 20px aliceblue,
-      0 0 30px rgb(172, 220, 248), 0 0 40px rgb(194, 233, 255),
-      0 0 50px aliceblue, 0 0 60px lightskyblue, 0 0 70px blue;
+    text-shadow: 0 0 10px rgb(114, 187, 255), 0 0 20px aliceblue, 0 0 30px rgb(172, 220, 248), 0 0 40px rgb(194, 233, 255), 0 0 50px aliceblue, 0 0 60px lightskyblue, 0 0 70px blue;
   }
 }
 
@@ -37,6 +35,7 @@ button {
 }
 .to-do-container {
   margin-top: 7px;
+
 }
 .to-do {
   background-color: rgb(194, 233, 255);
