@@ -1,4 +1,5 @@
 import axios from "axios";
+import React from "react";
 import { useState, useEffect } from "react";
 
 export interface IToDo {
@@ -6,11 +7,6 @@ export interface IToDo {
   completed: boolean;
   id: number;
 }
-
-// THINGS TO FIX:
-// make sure the order doesn't change when complete-button us pressed
-// have the todos be displayed, newest at the top
-// CSS
 
 const url =
   process.env.NODE_ENV === "production"
@@ -20,12 +16,81 @@ const url =
 export default function Main(): JSX.Element {
   const [toDoList, setToDoList] = useState<IToDo[]>([]);
   const [input, setInput] = useState<string>("");
+  // const [editing, setEditing] = useState(false);
+  // const [task, setTask] = useState<string>('');
 
-  console.log(toDoList);
-  // Update to-dos on START
+  interface ToDoItemProps {
+    todo: IToDo;
+    handlePatch: (id: number, task: string, completed: boolean) => void;
+    handleDeleteSelected: (id: number) => void;
+  }
+
+  const ToDoItem: React.FC<ToDoItemProps> = (props: ToDoItemProps) => {
+    const {
+      todo,
+      handleDeleteSelected,
+      handlePatch,
+    } = props;
+    
+    const [editing, setEditing] = useState(false);
+    const [task, setTask] = useState<string>(todo.task);
+
+    // when edit button is used
+    const handleEdit = () => {
+      setEditing(true);
+    };
+    const handleSave = () => {
+      task && patchToDo(String(todo.id), task, todo.completed);
+      setEditing(false);
+      getToDoList();
+    };
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        handleSave();
+      }
+    };
+
+    return (
+    <>
+      <div className="to-do" key={todo.id}>
+        <button
+          className={`${todo.completed}`}
+          id={String(todo.id)}
+          onClick={() => handlePatch(todo.id, todo.task, todo.completed)}
+        >
+          ✓
+        </button>
+        {editing ? (
+          <input
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+        ) : (
+          <span className="task-text">{todo.task}</span>
+        )}
+        <button
+          className="bin-button"
+          id={String(todo.id)}
+          onClick={() => handleDeleteSelected(todo.id)}
+        >
+          ✖
+        </button>
+        {!editing && (
+        <button className="edit-button" onClick={handleEdit}>
+          📝
+        </button>
+        )}
+      </div>
+    </>
+  );
+  };
+  const ToDoItemWithUseCallback = React.useCallback(ToDoItem, []);
+
+  // Update to-dos on START and on EDIT
   useEffect(() => {
     getToDoList();
-  }, [input]);
+  }, [input,ToDoItemWithUseCallback]);
 
   //GET to dos from API
   const getToDoList = async () => {
@@ -52,22 +117,25 @@ export default function Main(): JSX.Element {
     console.log(input);
     postToDoList(input);
     setInput("");
+    getToDoList();
   };
 
   //PATCH a to do
-  const patchToDo = async (id: string, isCompleted: boolean) => {
+  const patchToDo = async (id: string, task: string, isCompleted: boolean) => {
     console.log("patchToDo function works!");
     try {
       await axios.patch(url + "/items/" + id, {
-        completed: !isCompleted,
+        task,
+        completed: isCompleted,
       });
     } catch (error) {
       console.error("Woops... issue with PATCH request: ", error);
       console.error(error);
     }
   };
-  const handlePatch = async (id: number, completed: boolean) => {
-    await patchToDo(String(id), completed);
+  const handlePatch = async (id: number, task: string, completed: boolean) => {
+    // const { id, task, completed } = todo;
+    await patchToDo(String(id), task, completed);
     getToDoList();
   };
 
@@ -87,7 +155,7 @@ export default function Main(): JSX.Element {
     deleteCompleted().then(() => getToDoList());
   };
 
-  // DELETE selected to dos
+  // DELETE selected to do
   const deleteSelected = async (id: string) => {
     console.log("delete selected function works!");
     try {
@@ -99,6 +167,7 @@ export default function Main(): JSX.Element {
   const handleDeleteSelected = (id: number) => {
     deleteSelected(String(id)).then(() => getToDoList());
   };
+  
 
   return (
     <>
@@ -118,29 +187,15 @@ export default function Main(): JSX.Element {
       <button className="delete-completed" onClick={handleDeleteCompleted}>
         ✖ Completed tasks
       </button>
-
       <div className="to-do-container">
-        {toDoList.map((toDo) => {
-          return (
-            <div className="to-do" key={toDo.id}>
-              <button
-                className={`${toDo.completed}`}
-                id={String(toDo.id)}
-                onClick={() => handlePatch(toDo.id, toDo.completed)}
-              >
-                ✓
-              </button>
-              <span className="task-text">{toDo.task}</span>
-              <button
-                className="bin-button"
-                id={String(toDo.id)}
-                onClick={() => handleDeleteSelected(toDo.id)}
-              >
-                ✖
-              </button>
-            </div>
-          );
-        })}
+        {toDoList.map((toDo) => (
+          <ToDoItem
+            key={toDo.id}
+            todo={toDo}
+            handlePatch={handlePatch}
+            handleDeleteSelected={handleDeleteSelected}
+          />
+        ))}
       </div>
     </>
   );
