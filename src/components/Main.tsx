@@ -6,6 +6,7 @@ export interface IToDo {
   task: string;
   completed: boolean;
   id: number;
+  dueDate?: Date;
 }
 
 const url =
@@ -16,7 +17,7 @@ const url =
 export default function Main(): JSX.Element {
   const [toDoList, setToDoList] = useState<IToDo[]>([]);
   const [input, setInput] = useState<string>("");
-  // const [editing, setEditing] = useState(false);
+  const [dueDate, setDueDate] = useState<string>();
   // const [task, setTask] = useState<string>('');
 
   interface ToDoItemProps {
@@ -26,12 +27,8 @@ export default function Main(): JSX.Element {
   }
 
   const ToDoItem: React.FC<ToDoItemProps> = (props: ToDoItemProps) => {
-    const {
-      todo,
-      handleDeleteSelected,
-      handlePatch,
-    } = props;
-    
+    const { todo, handleDeleteSelected, handlePatch } = props;
+
     const [editing, setEditing] = useState(false);
     const [task, setTask] = useState<string>(todo.task);
 
@@ -45,52 +42,52 @@ export default function Main(): JSX.Element {
       getToDoList();
     };
     const handleKeyDown = (event: React.KeyboardEvent) => {
-      if (event.key === 'Enter') {
+      if (event.key === "Enter") {
         handleSave();
       }
     };
 
     return (
-    <>
-      <div className="to-do" key={todo.id}>
-        <button
-          className={`${todo.completed}`}
-          id={String(todo.id)}
-          onClick={() => handlePatch(todo.id, todo.task, todo.completed)}
-        >
-          ✓
-        </button>
-        {editing ? (
-          <input
-            value={task}
-            onChange={(e) => setTask(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-        ) : (
-          <span className="task-text">{todo.task}</span>
-        )}
-        <button
-          className="bin-button"
-          id={String(todo.id)}
-          onClick={() => handleDeleteSelected(todo.id)}
-        >
-          ✖
-        </button>
-        {!editing && (
-        <button className="edit-button" onClick={handleEdit}>
-          📝
-        </button>
-        )}
-      </div>
-    </>
-  );
+      <>
+        <div className="to-do" key={todo.id}>
+          <button
+            className={`${todo.completed}`}
+            id={String(todo.id)}
+            onClick={() => handlePatch(todo.id, todo.task, !todo.completed)}
+          >
+            ✓
+          </button>
+          {editing ? (
+            <input
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          ) : (
+            <span className="task-text">{todo.task}</span>
+          )}
+          <button
+            className="bin-button"
+            id={String(todo.id)}
+            onClick={() => handleDeleteSelected(todo.id)}
+          >
+            ✖
+          </button>
+          {!editing && (
+            <button className="edit-button" onClick={handleEdit}>
+              📝
+            </button>
+          )}
+        </div>
+      </>
+    );
   };
   const ToDoItemWithUseCallback = React.useCallback(ToDoItem, []);
 
   // Update to-dos on START and on EDIT
   useEffect(() => {
     getToDoList();
-  }, [input,ToDoItemWithUseCallback]);
+  }, [input, ToDoItemWithUseCallback]);
 
   //GET to dos from API
   const getToDoList = async () => {
@@ -104,19 +101,26 @@ export default function Main(): JSX.Element {
   };
 
   //POST to do to API
-  const postToDoList = async (toDoTask: string) => {
+  const postToDoList = async (toDoTask: string, dueDate?: Date) => {
     console.log("postToDoArr function is running!");
     try {
-      await axios.post(url + "/items", { task: toDoTask });
+      await axios.post(url + "/items", { task: toDoTask, dueDate });
     } catch (error) {
       console.error("Woops... issue with POST request: ", error);
     }
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(input);
-    postToDoList(input);
+    console.log(input, dueDate);
+    if (input && dueDate) {
+      // Convert the dueDate string to a Date object
+      const dueDateObject = new Date(dueDate);
+      postToDoList(input, dueDateObject);
+    } else {
+      postToDoList(input);
+    }
     setInput("");
+    setDueDate("");
     getToDoList();
   };
 
@@ -167,7 +171,6 @@ export default function Main(): JSX.Element {
   const handleDeleteSelected = (id: number) => {
     deleteSelected(String(id)).then(() => getToDoList());
   };
-  
 
   return (
     <>
@@ -178,6 +181,13 @@ export default function Main(): JSX.Element {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="What do you need to do?"
+        />
+        <span> </span>
+        <input
+          name="dueDate"
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
         />
         <span> </span>
         <button type="submit" className="add-button">
