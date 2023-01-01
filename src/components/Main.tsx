@@ -137,10 +137,9 @@ export default function Main(): JSX.Element {
       console.error(error);
     }
   };
-  const handlePatch = async (id: number, task: string, completed: boolean) => {
+  const handlePatch = (id: number, task: string, completed: boolean) => {
     // const { id, task, completed } = todo;
-    await patchToDo(String(id), task, completed);
-    getToDoList();
+    patchToDo(String(id), task, completed).then(() => getToDoList());
   };
 
   //DELETE completed to dos

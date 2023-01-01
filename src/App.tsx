@@ -13,7 +13,9 @@ export default function App(): JSX.Element {
 }
 
 /**
- * POSSIBLE FEATURES:
- * Setting a due date
+ * TO DO:
+ * Display due date
  * Filtering overdue todos
+ * Filter tasks with due date
+ * Order by due date
  */
