@@ -181,8 +181,10 @@ export default function Main(): JSX.Element {
           onChange={(e) => setInput(e.target.value)}
           placeholder="What do you need to do?"
         />
+        <br/>
         <span> </span>
         <input
+          className="due-date-input"
           name="dueDate"
           type="date"
           value={dueDate}
@@ -190,7 +192,7 @@ export default function Main(): JSX.Element {
         />
         <span> </span>
         <button type="submit" className="add-button">
-          +
+        ➕ Add task
         </button>
       </form>
       <button className="delete-completed" onClick={handleDeleteCompleted}>

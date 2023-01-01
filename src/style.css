@@ -4,7 +4,7 @@
   color: white;
 }
 .title {
-  font-size: 40px;
+  font-size: 48px;
   text-align: left;
   animation: glow 2s ease-in-out infinite alternate;
 }
@@ -19,11 +19,17 @@
 input {
   background-color: aliceblue;
   border: none;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   height: 25px;
-  width: 210px;
+  width: 298px;
   color: #000;
 }
+.due-date-input {
+  width: 208px;
+  margin-right: 4px;
+  color:#000;
+}
+
 button {
   background-color: aliceblue;
   border: none;
@@ -32,8 +38,14 @@ button {
   height: 27px;
   width: 27px;
 }
+.add-button {
+  border-radius: 0%;
+  background-color: rgb(255, 244, 158);
+  width: 85px;
+}
 .add-button:hover {
-  background-color: rgb(150, 204, 255);
+  background-color: rgb(104, 97, 0);
+  color: white;
 }
 .to-do-container {
   margin-top: 7px;
